@@ -3,7 +3,6 @@ use warnings;
 use strict;
 use Getopt::Long;
 use XML::Simple;
-use Data::Dumper;
 
 use lib '/home/mns/lib/perl/class/v5.0';
 use MyBio::NGS::Experiment;
@@ -42,16 +41,16 @@ foreach my $sub_experiment_name (@sub_experiment_names) {
 		my $ofile = $experiment_folder.'/'.$sample_folder."/tracks/$ifilename";
 		$ofile =~ s/\.bed(\.gz)*$/.collapse.bed/;
 		if ($ofile eq $ifile) {
-			die "What the f...! Input file and output file are the same. $ofile eq $ifile\n";
+			die "Input file and output file are the same. $ofile eq $ifile\n";
 		}
 		
 		if ($ifile =~ /\.gz$/) {
-			warn "Running \"zcat $ifile | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile\"\n";
-			system "zcat $ifile | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile";
+			warn "Running \"zcat $ifile | collapseBed.pl | sort -k1,1 -k2,2n > $ofile\"\n";
+			system "zcat $ifile | collapseBed.pl | sort -k1,1 -k2,2n > $ofile";
 		}
 		else {
-			warn "Running \"cat $ifile | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile\"\n";
-			system "cat $ifile | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile";
+			warn "Running \"cat $ifile | collapseBed.pl | sort -k1,1 -k2,2n > $ofile\"\n";
+			system "cat $ifile | collapseBed.pl | sort -k1,1 -k2,2n > $ofile";
 		}
 	}
 }
@@ -67,12 +66,12 @@ if (-e $ifile_pool) {
 	}
 	
 	if ($ifile_pool =~ /\.gz$/) {
-		warn "Running \"zcat $ifile_pool | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile_pool\"\n";
-		system "zcat $ifile_pool | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile_pool";
+		warn "Running \"zcat $ifile_pool | collapseBed.pl | sort -k1,1 -k2,2n > $ofile_pool\"\n";
+		system "zcat $ifile_pool | collapseBed.pl | sort -k1,1 -k2,2n > $ofile_pool";
 	}
 	else {
-		warn "Running \"cat $ifile_pool | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile_pool\"\n";
-		system "cat $ifile_pool | bedToCollapsedBed.pl | sort -k1,1 -k2,2n > $ofile_pool";
+		warn "Running \"cat $ifile_pool | collapseBed.pl | sort -k1,1 -k2,2n > $ofile_pool\"\n";
+		system "cat $ifile_pool | collapseBed.pl | sort -k1,1 -k2,2n > $ofile_pool";
 	}
 
 }
@@ -83,7 +82,7 @@ warn "time elapsed = ".(time-$time)."sec\n";
 # Subroutines used
 ###########################################
 sub usage {
-	print "\nUsage:   $0 <options> experiment_params_file sam_input_filename\n\n".
+	print "\nUsage:   $0 <options> experiment_params_file bed_input_filename\n\n".
 	      "Options:\n".
 	      "        -h             print this help\n\n";
 	exit;

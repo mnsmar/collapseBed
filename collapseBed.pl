@@ -1,7 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use warnings;
 use strict;
 use Getopt::Long;
+use Scalar::Util qw(looks_like_number);
 
 my $help;
 GetOptions(
@@ -9,20 +10,39 @@ GetOptions(
 ) or usage();
 usage() if $help;
 
-my %counts;
+my %scores;
 while (my $line = <>) {
 	chomp $line;
-	if ($line !~ /^chr/) {
+	if ($line =~ /^(track|browser)/) {
 		print "$line\n";
-		next;
 	}
-	my ($chr, $start, $stop, $name, $score, $strand) = split(/\t/,$line);
-	$counts{"$chr|$start|$stop|$strand"}++;
+	else {
+		my @fields = split(/\t/,$line);
+		
+		# get the score and name and remove them from fields
+		my ($score,$name) = splice(@fields, 3, 2);
+		if (!looks_like_number($score)) {
+			$score = 1;
+		}
+		
+		# discard empty fields at the end
+		while (!defined $fields[-1]) {
+			pop @fields;
+		}
+		
+		my $identifier = join("\t",@fields);
+		$scores{$identifier} += $score;
+	}
 }
 
-foreach my $name (keys %counts) {
-	my ($chr, $start, $stop, $strand) = split(/\|/,$name);
-	print "$chr\t$start\t$stop\t$counts{$name}\t$counts{$name}\t$strand\n"; 
+foreach my $identifier (keys %scores) {
+	my @fields = split(/\t/,$identifier);
+	my $final_score = $scores{$identifier};
+	
+	# put the score and name back into fields (use score as name)
+	my ($score,$name) = splice(@fields, 3, 0, ($final_score,$final_score));
+	
+	print join("\t",@fields)."\n";
 }
 
 ###########################################
