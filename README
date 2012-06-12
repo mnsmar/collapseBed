@@ -1,0 +1,4 @@
+This script collapses a BED file.
+
+Entries which have the same coordinates are collapsed into a single entry.
+The score of the new entry is the sum of the collapsed entries.
