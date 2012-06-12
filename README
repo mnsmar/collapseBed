@@ -1,4 +1,4 @@
 This script collapses a BED file.
 
-Entries which have the same coordinates are collapsed into a single entry.
-The score of the new entry is the sum of the collapsed entries.
+Entries which are identical except for their score and name are collapsed into a single entry.
+If the score field of the entries is defined then the score of the new entry is the sum of the collapsed entries. Otherwise the new score is the number of collapsed entries.
